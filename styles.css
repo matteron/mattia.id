@@ -1,24 +1,38 @@
 :root {
-	--bg_rgb: 239, 239, 239;
-	--bg: rgb(var(--bg_rgb));
-	--fg_rgb: 20, 20, 20;
-	--fg: rgb(var(--fg_rgb));
-	--a: 0.2;
-	--fg_a: rgba(var(--fg_rgb), var(--a));
+	--lite_rgb: 247, 249, 249;
+	--dark_rgb: 51, 50, 50;
+	--darker_rgb: 20, 20, 20;
+	--a: 0.1;
+
+	--lite: rgb(var(--lite_rgb));
+	--dark: rgb(var(--dark_rgb));
+
+	--bg: var(--lite);
+	--fg: var(--dark);
 
 	--sq: rgba(100, 100, 100, 0.075);
 	--sq_size: 0.65rem;
 
-	--shadow: 2px 4px 0px var(--fg_a);
+	--shadow_c: rgba(var(--dark_rgb), var(--a));
+	--shadow: drop-shadow(2px 4px 2px var(--shadow_c));
 
 	--blue: #4392F1;
-	--orange: #E4572E;
+	--orange: #FF4F00;
 	--green: #2BB6A9;
 
 	--line: var(--orange);
 	--left: var(--blue);
 	--hl: var(--green);
 }
+
+@media (prefers-color-scheme:dark) {
+	:root {
+		--fg: var(--lite);
+		--bg: var(--dark);
+		--shadow_c: rgba(var(--darker_rgb), var(--a));
+	}
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -26,58 +40,74 @@
 	box-sizing: border-box;
 	color: var(--fg);
 }
+
 ::selection {
 	background-color: var(--green);
-	color: var(--bg);
+	color: var(--lite);
 }
 
 html {
 	background-color: var(--bg);
-  background-image:
-    linear-gradient(45deg, var(--sq) 25%, transparent 25%), 
-    linear-gradient(135deg, var(--sq) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--sq) 75%),
-    linear-gradient(135deg, transparent 75%, var(--sq) 75%);
-  background-size:calc(2 * var(--sq_size)) calc(2 * var(--sq_size)); 
-  background-position:0 0, var(--sq_size) 0, var(--sq_size) calc(-1 * var(--sq_size)), 0 calc(-1 * var(--sq_size)); 
+	background-image:
+		linear-gradient(45deg, var(--sq) 25%, transparent 25%),
+		linear-gradient(135deg, var(--sq) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, var(--sq) 75%),
+		linear-gradient(135deg, transparent 75%, var(--sq) 75%);
+	background-size: calc(2 * var(--sq_size)) calc(2 * var(--sq_size));
+	background-position: 0 0, var(--sq_size) 0, var(--sq_size) calc(-1 * var(--sq_size)), 0 calc(-1 * var(--sq_size));
 }
+
 body {
 	margin: 1rem;
 	background-color: var(--bg);
 	padding: 2rem;
 	max-width: 44rem;
 	border-left: 3px solid var(--left);
-	box-shadow: var(--shadow);
+	filter: var(--shadow);
 }
-body > *, main > p, article p, article figure {
+
+body>*,
+main>p,
+article p,
+article figure {
 	margin-bottom: 1.25rem;
 }
+
 footer {
 	margin-bottom: 0;
 }
 
 ul {
 	padding-left: 1rem;
+	list-style: circle;
 }
-li:not(:last-child), h2, footer p {
-	margin-bottom: 0.25rem;
+
+li:not(:last-child),
+h2,
+footer p {
+	margin-bottom: 0.35rem;
 }
+
 a:hover {
 	color: var(--bg);
 	background-color: var(--fg);
 	transform: skew(-25deg);
 	display: inline-block;
 	box-shadow: var(--shadow);
-	&> h1 {
+
+	&>h1 {
 		color: var(--bg);
 	}
 }
+
 header {
 	display: flex;
 	justify-content: space-between;
 	border-bottom: var(--line) 3px solid;
+
 	& h1 {
 		display: flex;
+
 		& div {
 			transform: skew(-25deg);
 			font-weight: 100;
@@ -86,7 +116,8 @@ header {
 	}
 }
 
-main a, footer a {
+main a,
+footer a {
 	text-decoration: underline;
 }
 
@@ -109,25 +140,29 @@ img {
 
 blockquote {
 	background-color: var(--sq);
-	&> p {
+
+	&>p {
 		padding-left: 1rem;
 		padding-right: 0.5rem;
 	}
-	&> p:last-child {
+
+	&>p:last-child {
 		padding-bottom: 0.5rem;
 	}
-	&> h4 {
+
+	&>h4 {
 		padding: 0.5rem;
 	}
 }
 
-.pic > img {
+.pic>img {
 	position: absolute;
 	top: -2rem;
 	left: 3rem;
 	display: none;
 }
-.pic:hover > img {
+
+.pic:hover>img {
 	display: block;
 }
 
@@ -135,15 +170,7 @@ article img {
 	max-width: 100%;
 }
 
-article > h2 {
+article>h2 {
 	display: flex;
 	justify-content: space-between;
-}
-
-@media (prefers-color-scheme:dark) {
-	:root {
-		--fg: rgb(var(--bg_rgb));
-		--fg_a: rgba(var(--bg_rgb), var(--a));
-		--bg: rgb(var(--fg_rgb));
-	}
 }
