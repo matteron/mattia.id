@@ -48,7 +48,8 @@
 
 html {
     background-color: var(--bg);
-    background-image: linear-gradient(45deg, var(--sq) 25%, transparent 25%),
+    background-image:
+        linear-gradient(45deg, var(--sq) 25%, transparent 25%),
         linear-gradient(135deg, var(--sq) 25%, transparent 25%),
         linear-gradient(45deg, transparent 75%, var(--sq) 75%),
         linear-gradient(135deg, transparent 75%, var(--sq) 75%);
@@ -179,4 +180,8 @@ article img {
 article > h2 {
     display: flex;
     justify-content: space-between;
+}
+
+s {
+    text-decoration: line-through;
 }
