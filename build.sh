@@ -1,50 +1,26 @@
 set -euo pipefail
 
 SRC_DIR="./src"
-OUT_DIR="./pages"
 TEMPLATE="./template.html"
 
-KEEP_PATHS=(
+STATIC_FILE_PATHS=(
   "styles.css"
   "img"
   "favicon.ico"
   "resume.html"
 )
 
-mkdir -p "$OUT_DIR"
-
-clean_pages() {
-  local dir="$1"
-  shift
-  local keep=("$@")
-
-  shopt -s dotglob nullglob
-
-  for item in "$dir"/*; do
-    local name
-    name="$(basename "$item")"
-
-    for k in "${keep[@]}"; do
-      [[ "$name" == "$k" ]] && continue 2
-    done
-
-    rm -rf "$item"
-  done
-
-  shopt -u dotglob nullglob
-}
+TEMP_OUT_DIR=$(mktemp -d -t gitpages-XXXXXX)
 
 [[ -f "$TEMPLATE" ]] || {
   echo "Missing template.html in project root"
   exit 1
 }
 
-clean_pages "$OUT_DIR" "${KEEP_PATHS[@]}"
-
 echo "Searching ${SRC_DIR}"
 find "$SRC_DIR" -type f -name "*.html" | while read -r src_file; do
   rel_path="${src_file#$SRC_DIR/}"
-  out_file="$OUT_DIR/$rel_path"
+  out_file="$TEMP_OUT_DIR/$rel_path"
   out_dir="$(dirname "$out_file")"
 
   mkdir -p "$out_dir"
@@ -63,7 +39,7 @@ find "$SRC_DIR" -type f -name "*.html" | while read -r src_file; do
   if [[ -n "$no_index" ]]; then
     IFS='/' read -ra parts <<< "$no_index"
     for part in "${parts[@]}"; do
-        BREADCRUMBS+=" <div>|</div> <a href=\"$part.html\">$part</a>"
+        BREADCRUMBS+=" <div>|</div> <a href=\"$no_ext\">$part</a>"
         TITLE="$part - ";
     done
   fi
@@ -73,5 +49,19 @@ find "$SRC_DIR" -type f -name "*.html" | while read -r src_file; do
 
   envsubst < "$TEMPLATE" > "$out_file"
 
-  echo "Rendered: $out_file"
+  echo "Rendered: $src_file"
 done
+
+echo "Copying kept paths to temporary output directory..."
+for item in "${STATIC_FILE_PATHS[@]}"; do
+  if [[ -e "./$item" ]]; then
+    cp -r "./$item" "$TEMP_OUT_DIR/"
+    echo "Copied: $item"
+  else
+    echo "Warning: Path to keep not found: ./$item (Skipping copy)"
+  fi
+done
+
+echo "Build complete in temporary directory: $TEMP_OUT_DIR"
+
+export TEMP_OUT_DIR
