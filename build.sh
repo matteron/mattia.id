@@ -10,7 +10,7 @@ STATIC_FILE_PATHS=(
   "resume.html"
 )
 
-TEMP_OUT_DIR=$(mktemp -d -t gitpages-XXXXXX)
+TEMP_OUT_DIR=$(mktemp -d -t gitpages-mattia-id)
 
 [[ -f "$TEMPLATE" ]] || {
   echo "Missing template.html in project root"
