@@ -169,7 +169,8 @@ blockquote {
     display: none;
 }
 
-.pic:hover > img {
+.pic:hover > img,
+.pic:active > img {
     display: block;
 }
 
