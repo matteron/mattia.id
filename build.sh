@@ -31,25 +31,32 @@ find "$SRC_DIR" -type f -name "*.html" | while read -r src_file; do
   # Strip .html
   no_ext="${rel_path%.html}"
 
-  # Remove trailing /index
-  no_index="${no_ext%/index}"
-
   BREADCRUMBS=""
+  TITLE=""
+  current_path=""
 
-  if [[ -n "$no_index" ]]; then
-    IFS='/' read -ra parts <<< "$no_index"
-    for part in "${parts[@]}"; do
-        BREADCRUMBS+=" <div>|</div> <a href=\"$no_ext\">$part</a>"
-        TITLE="$part - ";
-    done
-  fi
+  if [[ "$no_ext" != "index" ]]; then
+      # Remove trailing /index for subdirectories
+      no_index="${no_ext%/index}"
 
-  export BREADCRUMBS
-  export TITLE
+      IFS='/' read -ra parts <<< "$no_index"
+      for i in "${!parts[@]}"; do
+        part="${parts[$i]}"
+        if [[ -n "$current_path" ]]; then
+          current_path+="/"
+        fi
+        current_path+="$part"
+        BREADCRUMBS+="<div>|</div> <a href=\"/${current_path}\">${part}</a>"
+        TITLE="${part} - " # Build title in reverse order
+      done
+    fi
 
-  envsubst < "$TEMPLATE" > "$out_file"
+    export BREADCRUMBS
+    export TITLE
 
-  echo "Rendered: $src_file"
+    envsubst < "$TEMPLATE" > "$out_file"
+
+    echo "Rendered: $src_file"
 done
 
 echo "Copying kept paths to temporary output directory..."
